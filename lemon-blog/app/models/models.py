@@ -19,7 +19,6 @@ class User(db.Model):
     user_name = db.Column(db.String(20), index=True, unique=True, nullable=False)
     user_password = db.Column(db.String(15), nullable=False)
     user_email = db.Column(db.String(30), index=True, unique=True, nullable=False)
-    user_profile_photo = db.Column(db.String(255))
     user_registration_time = db.Column(db.DATETIME, nullable=False)
 
     def __str__(self):
@@ -69,11 +68,10 @@ class Article(db.Model):
 class Comment(db.Model):
     __tablename__ = 'lemon_comments'
     comment_id = db.Column(db.BIGINT, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.BIGINT, db.ForeignKey('lemon_user.user_id'))
+    user_id = db.Column(db.BIGINT, db.ForeignKey('lemon_users.user_id'))
     article_id = db.Column(db.BIGINT, index=True)
     comment_date = db.Column(db.DATETIME, index=True)
     comment_content = db.Column(db.Text, nullable=False)
-    parent_comment_id = db.Column(db.BIGINT, nullable=False, index=True)
 
     def __str__(self):
         return "<Comment content:{}>".format(self.comment_content)

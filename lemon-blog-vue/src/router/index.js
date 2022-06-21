@@ -6,7 +6,9 @@ import AppIndex from '@/components/home/AppIndex'
 import AllArticles from '@/components/home/AllArticles'
 import UserHome from '@/components/home/UserHome'
 import AdminIndex from '@/components/admin/AppIndex'
+import Manage from '@/components/admin/Manage'
 import Editor from '@/components/admin/Editor'
+import ArticlesModify from '@/components/admin/ArticlesModify'
 import ArticleDeatils from '@/components/home/ArticleDetails'
 import Home from '@/components/Home'
 
@@ -61,7 +63,7 @@ export default new Router({
           meta: {
             requireAuth: true
           }
-        }
+        },
       ]
     },
     {
@@ -79,6 +81,7 @@ export default new Router({
       path: '/admin',
       name: 'AdminIndex',
       component: AdminIndex,
+      redirect: '/admin/manage',
       meta: {
         requireAuth: true
       }
@@ -92,6 +95,23 @@ export default new Router({
         requireAuth: true 
       }
     },
-    
+    {
+      // 文章管理
+      path: '/admin/manage',
+      name: 'Manage',
+      component: Manage,
+      meta: {
+        requireAuth: true 
+      }
+    },
+    {
+      // 文章修改
+      path: '/admin/article/modify',
+      name: 'ArticlesModify',
+      component: ArticlesModify,
+      meta: {
+        requireAuth: true 
+      }
+    },
   ]
 })

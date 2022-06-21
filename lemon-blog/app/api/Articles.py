@@ -12,12 +12,11 @@ import re
 from datetime import datetime
 
 from flask import jsonify, request, Response, Blueprint
-from app.models.models import User, Article
-from flask_sqlalchemy import SQLAlchemy
+from app.models.models import User, Article, Comment
 from utils.isEmpty import is_empty
+from app.models.models import db
 from utils.getArticles import get_articles_utils
 
-db = SQLAlchemy()
 article = Blueprint('article', __name__)
 
 msg = {
@@ -105,7 +104,7 @@ def get_articles(page):
     @:param page: 请求页面号
     :return:
     """
-    articles = Article.query.all()
+    articles = Article.query.order_by(Article.article_date.desc()).all()
     article_list = []
     for i in articles:
         article_list.append(i.__dict__)
@@ -138,7 +137,7 @@ def get_user_articles(user):
     :return:
     """
     user_id = User.query.filter(User.user_name == user).first().user_id
-    articles = Article.query.filter(Article.user_id == user_id).all()
+    articles = Article.query.order_by(Article.article_date.desc()).filter(Article.user_id == user_id).all()
     article_list = []
     for i in articles:
         article_list.append(i.__dict__)
@@ -161,7 +160,7 @@ def get_user_articles_page(user, page):
     :return:
     """
     user_id = User.query.filter(User.user_name == user).first().user_id
-    articles = Article.query.filter(Article.user_id == user_id).all()
+    articles = Article.query.order_by(Article.article_date.desc()).filter(Article.user_id == user_id).all()
     article_list = []
     for i in articles:
         article_list.append(i.__dict__)
@@ -176,3 +175,84 @@ def get_user_articles_page(user, page):
         'articles': art_data
     }
     return jsonify(data)
+
+
+@article.route('/update/article', methods=['POST'])
+def update_article():
+    """
+    文章提交
+    :return:
+    """
+    data = request.get_json()
+    if not data:
+        msg['code'] = '404'
+        msg['message'] = 'not json!'
+        return jsonify(msg)
+
+    article_id = data.get('id', None)
+    article_title = data.get('articleTitle', None)
+    article_content_md = data.get('articleContentMd', None)
+    article_content_html = data.get('articleContentHtml', None)
+    article_content_abstract = data.get('articleAbstract', None)
+    # user_name = data.get('username', None)
+    #
+    # user_id = User.query.filter(User.user_name == user_name).first().user_id
+
+    test = {
+        'article_title': article_title,
+        'article_content_md': article_content_md,
+        'article_content_html': article_content_html,
+    }
+    # 校验字段是否为空
+    result = is_empty(test)
+    if result:
+        msg['code'] = '404'
+        msg['message'] = result + '不能为空！'
+        return jsonify(msg)
+
+    # 查询出目标文章并进行修改
+
+    target_article = Article.query.filter(Article.article_id == article_id).first()
+
+    target_article.article_content_md = article_content_md
+    target_article.article_content_html = article_content_html
+    target_article.article_title = article_title
+    target_article.article_abstract = article_content_abstract
+
+    db.session.add(target_article)
+    db.session.commit()
+    db.session.close()
+
+    msg['code'] = '200'
+    msg['message'] = '修改成功'
+    return jsonify(msg)
+
+
+@article.route('/delete/article/<article_id>', methods=['GET'])
+def delete_article(article_id):
+    """
+    删除指定文章
+    :param article_id: 文章id
+    :return:
+    """
+
+    # 删除思路：找出对应的文章id，删除此条记录，然后找到评论表中对应的文章id，删除对应的此文章的所有评论
+    data_item = Article.query.filter(Article.article_id == article_id).first()
+
+    if not id:
+        msg['code'] = '404'
+        msg['message'] = '请传入有效文章id'
+
+    db.session.delete(data_item)
+    db.session.commit()
+
+    comments = Comment.query.filter(Comment.article_id == article_id).all()
+    for i in comments:
+        db.session.delete(i)
+        db.session.commit()
+
+    db.session.close()
+    msg['code'] = '200'
+    msg['message'] = '删除文章成功'
+
+    return jsonify(msg)

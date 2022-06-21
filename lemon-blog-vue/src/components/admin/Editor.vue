@@ -61,48 +61,49 @@
         }
         },
         methods: {
-        saveArticles (value, render) {
-            // value 是 md，render 是 html
-            console.log(value, render);
-            this.$confirm('是否保存并发布文章?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-            }).then(() => {
-                console.log(this.article.id);
-                console.log(this.article.articleTitle);
-                console.log(value);
-                this.$axios
-                .post('/post/article', {
-                    id: this.article.id,
-                    // id: 1,
-                    articleTitle: this.article.articleTitle,
-                    articleContentMd: value,
-                    articleContentHtml: render,
-                    articleAbstract: this.article.articleAbstract,
-                    // articleCover: this.article.articleCover,
-                    articleDate: this.article.articleDate,
-                    username: window.localStorage.getItem('user')
-                }).then(resp => {
-                if (resp && resp.data.code == 200) {
-                    this.$message({
-                        type: 'info',
-                        message: '已保存成功'
+            saveArticles (value, render) {
+                // value 是 md，render 是 html
+                console.log(value, render);
+                this.$confirm('是否保存并发布文章?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+                }).then(() => {
+                    console.log(this.article.id);
+                    console.log(this.article.articleTitle);
+                    console.log(value);
+                    this.$axios
+                    .post('/post/article', {
+                        id: this.article.id,
+                        // id: 1,
+                        articleTitle: this.article.articleTitle,
+                        articleContentMd: value,
+                        articleContentHtml: render,
+                        articleAbstract: this.article.articleAbstract,
+                        // articleCover: this.article.articleCover,
+                        articleDate: this.article.articleDate,
+                        username: window.localStorage.getItem('user')
+                    }).then(resp => {
+                    if (resp && resp.data.code == 200) {
+                        this.$message({
+                            type: 'info',
+                            message: '已保存成功'
+                        })
+                        this.$router.push({path: '/admin/manage'})
+                        console.log(resp.date);
+                    } else {
+                        console.log(resp.data);
+                    }
                     })
-                    console.log(resp.date);
-                } else {
-                    console.log(resp.data);
                 }
+                ).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消发布'
                 })
+                })
+            },
             }
-            ).catch(() => {
-            this.$message({
-                type: 'info',
-                message: '已取消发布'
-            })
-            })
-        },
-        }
     }
 </script>
 

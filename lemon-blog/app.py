@@ -12,6 +12,7 @@ from flask import Flask
 from app.api.Users import auth
 from app.api.Articles import article
 from app.api.ArticleDetails import detail
+from app.api.Comments import comment
 from flask_cors import CORS
 from app.models.models import db
 
@@ -23,6 +24,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.register_blueprint(auth, url_prefix="/api")
 app.register_blueprint(article, url_prefix="/api")
 app.register_blueprint(detail, url_prefix="/api")
+app.register_blueprint(comment, url_prefix="/api")
 
 CORS(app, supports_credentials=True)
 

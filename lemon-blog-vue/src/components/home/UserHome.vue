@@ -10,6 +10,12 @@
                             <el-avatar :size="50" :src="imgURL"></el-avatar>
                         </div>
                         <p style="font-family: 'Hiragino Sans GB'">{{ username }}</p>
+                        <el-popconfirm
+                        title="确定退出登陆吗？"
+                        @confirm="userLogout"
+                        >
+                        <el-button slot="reference" class="logout">退出登录</el-button>
+                        </el-popconfirm>
                     </div>
                     <div class="cal">
                         <el-calendar v-model="cal"></el-calendar>
@@ -105,6 +111,10 @@
                 
             });
         },
+        userLogout() {
+            window.localStorage.removeItem('user')
+            location.reload()
+        }
     }
   }
 </script>
@@ -140,6 +150,10 @@
 
     .articleItem {
         padding: 25px;
+    }
+
+    .logout {
+        margin-top: 40px;
     }
 
 </style>

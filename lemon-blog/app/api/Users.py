@@ -65,15 +65,12 @@ def register():
     user.user_registration_time = datetime.datetime.now()
     user.user_password = password
     user.user_email = email
-    user.user_profile_photo = ''
 
     db.session.add(user)
     db.session.commit()
 
     msg['code'] = '200'
     msg['message'] = '注册成功'
-
-    # 注册成功后填充一个默认文章
 
     return jsonify(msg)
 

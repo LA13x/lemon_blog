@@ -19,6 +19,7 @@
     "element-ui": "^2.15.9",
     "mavon-editor": "^2.10.4",
     "vue": "^2.5.2",
+    "vue-meditor": "^2.1.1",
     "vue-router": "^3.0.1",
     "vuex": "^3.6.2"
   },

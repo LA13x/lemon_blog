@@ -44,6 +44,8 @@ def get_article_by_id(article_id):
         'id': article['article_id'],
         'title': article['article_title'],
         'html': article['article_content_html'],
+        'md': article['article_content_md'],
+        'abstract': article['article_abstract'],
         'date': datetime.strftime(article['article_date'], '%Y-%m-%d'),
         'username': User.query.filter(User.user_id == article['user_id']).first().user_name  # 返回作者信息
     }
